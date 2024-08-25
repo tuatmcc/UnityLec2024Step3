@@ -150,7 +150,7 @@ public class UnityChanController : MonoBehaviour
 
 一見問題なくジャンプできそうですが、ジャンプすると両足が揃ってるときに、滑って見えます。また、スペースキーを連打すると、連続でジャンプしてしまいます。
 
-![alt text](./img/2.test1.webp)
+![alt text](./img/2.test1.gif)
 
 # MCC Unity講習会
 
