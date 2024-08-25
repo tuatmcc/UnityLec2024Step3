@@ -61,4 +61,12 @@ public class UnityChanController : MonoBehaviour
             interactableObj?.Interact();
         }
     }
+    
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            animator.SetTrigger("jump");
+        }
+    }
 }

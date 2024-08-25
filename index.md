@@ -33,17 +33,124 @@ Unityちゃんアドベンチャーゲーム
 
 ## 2.1. ジャンプアニメーションの追加
 
-/Assets/UnityChan/Animations/ の中にある `UnityChanAnimatorController` に /Assets/UnityChan の中にある `JUMP00B` をドラッグアンドドロップしてください。**`JUMP00` ではなく、`JUMP00B` です！**
+/Assets/UnityChanAdventure/Animations/ の中にある `UnityChanAnimatorController` に /Assets/UnityChan の中にある `JUMP00B` をドラッグアンドドロップしてください。**`JUMP00` ではなく、`JUMP00B` です！**
 
 ![alt text](./img/2.addjump.webp)
 
-次に、 `+` を押してパラメーターに `Jump` を追加してください。種類は `Trigger` です。
+次に、 `+` を押してパラメーターに `jump` を追加してください。種類は `Trigger` です。
 
 ![alt text](./img/2.addparm.webp)
 
-続いて、ジャンプのアニメーションステートに `Move` と `Idle` から遷移する矢印を追加してください。
+続いて、ジャンプのアニメーションステートに `Move` と `Idle` から遷移する矢印を双方向に追加してください。
 
 ![alt text](./img/2.addtrans.webp)
+
+ジャンプのステートに向かう２つの矢印(`Idel -> Jump00B` と `Move -> Jump00`)では、 `Has Exit Time` のチェックを外してください。そして、 `Conditions` に `Jump` を追加してください。
+
+![alt text](./img/2.transconfig.webp)
+
+`Jump00B -> Move` への `Conditions` には `speed` で `0.1` 以上を設定してください。
+
+![alt text](./img/2.jump2move.webp)
+
+`Jump00B -> Idle` への `Conditions` には `speed` で `0.1` 未満を設定してください。
+
+![alt text](./img/2.jump2idle.webp)
+
+## 2.2. ジャンプをスペースキーで発動させる
+
+スペースキーを押すとジャンプするようにします。
+
+/Assets/UnitychanAdventure の中にある Input Actions Assets の `Main` に `+` を押して `Jump` を追加してください。キーの内容はスペースキーです。
+
+![alt text](./img/2.addkey.webp)
+
+設定できたら、 Input Action Assets の編集ウィンドウの上のほうにある `Save Asset` を押して保存してください。
+
+次に /Assets/UnitychanAdventure/Scripts/UnityChanController.cs の中にある `Update` メソッドに以下のコードを追加してください。
+
+```diff title="UnityChanController.cs"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class UnityChanController : MonoBehaviour
+{
+    private Rigidbody rb;
+    private float speed;
+    private float rotationSpeed;
+    private Vector2 moveInput;
+    private Animator animator;
+    private Interactable interactableObj;
+
+    [SerializeField] private float moveSpeedConst = 5.0f;
+    [SerializeField] private float rotationSpeedConst = 5.0f;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+    }
+
+    void FixedUpdate()
+    {
+        speed = moveInput.y * moveSpeedConst;
+        rotationSpeed = moveInput.x * rotationSpeedConst;
+
+        rb.velocity = transform.forward * speed + new Vector3(0f, rb.velocity.y, 0f);
+        rb.angularVelocity = new Vector3(0, rotationSpeed, 0);
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+        animator.SetFloat("speed", moveInput.y);
+        animator.SetFloat("rotate", moveInput.x);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent<Interactable>(out var obj))
+        {
+            interactableObj = obj;
+        }
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.TryGetComponent<Interactable>(out var obj) && obj == interactableObj)
+        {
+            interactableObj = null;
+        }
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            interactableObj?.Interact();
+        }
+    }
+
++   public void OnJump(InputAction.CallbackContext context)
++    {
++      if (context.performed)
++       {
++           animator.SetTrigger("jump");
++       }
++   }
+}
+```
+
+`Main` シーンを開き、Hierarchy にある `GameManeger` の `Player Input` の `Event` -> `Main` の `Jump` で `+` を押し、 `Main` シーンにある `unitychan` をドラッグアンドドロップして、 No Function のところにある `Unity Chan Controller` の `On Jump` を選択してください。
+
+![alt text](./img/2.calljump.webp)
+
+一見問題なくジャンプできそうですが、ジャンプすると両足が揃ってるときに、滑って見えます。また、スペースキーを連打すると、連続でジャンプしてしまいます。
+
+![alt text](./img/2.test1.webp)
 
 # MCC Unity講習会
 
