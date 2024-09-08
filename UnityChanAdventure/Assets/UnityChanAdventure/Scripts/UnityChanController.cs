@@ -15,6 +15,8 @@ public class UnityChanController : MonoBehaviour
 
     [SerializeField] private float moveSpeedConst = 5.0f;
     [SerializeField] private float rotationSpeedConst = 5.0f;
+    [SerializeField] private float jumpForce = 200.0f;
+    [SerializeField] private float raydistance = 1.1f;
 
     void Start()
     {
@@ -66,7 +68,12 @@ public class UnityChanController : MonoBehaviour
     {
         if (context.performed)
         {
-            animator.SetTrigger("jump");
+            bool isGrounded = Physics.Raycast(transform.position + new Vector3(0.0f, 1.0f, 0.0f), Vector3.down, raydistance);
+            if (isGrounded)
+            {
+                animator.SetTrigger("jump");
+                rb.AddForce(Vector3.up * jumpForce);
+            }
         }
     }
 }

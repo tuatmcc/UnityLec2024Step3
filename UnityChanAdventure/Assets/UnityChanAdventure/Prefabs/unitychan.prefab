@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2329705587421331876}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.20534202, y: -0.21258935, z: 0.045747574, w: 0.9542262}
+  m_LocalRotation: {x: 0.20534053, y: -0.2125854, z: 0.045746326, w: 0.95422745}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -402,7 +402,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5098635633990109523}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.23986726, y: -0.21078335, z: 0.053438276, w: 0.94613874}
+  m_LocalRotation: {x: 0.23986727, y: -0.21078338, z: 0.053438287, w: 0.94613874}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -735,7 +735,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8154039274258453534}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2226211, y: -0.21172738, z: 0.049597874, w: 0.95034283}
+  m_LocalRotation: {x: 0.2226178, y: -0.21172051, z: 0.049595404, w: 0.9503452}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -803,7 +803,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400326, guid: 8f0565f23a2b58541a475bd3c1393052, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.83
       objectReference: {fileID: 0}
     - target: {fileID: 400326, guid: 8f0565f23a2b58541a475bd3c1393052, type: 3}
       propertyPath: m_LocalPosition.y
@@ -811,7 +811,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400326, guid: 8f0565f23a2b58541a475bd3c1393052, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 1.685
       objectReference: {fileID: 0}
     - target: {fileID: 400326, guid: 8f0565f23a2b58541a475bd3c1393052, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1044,3 +1044,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeedConst: 5
   rotationSpeedConst: 5
+  jumpForce: 200
+  raydistance: 1.1
