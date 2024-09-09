@@ -472,6 +472,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: unitychan
       objectReference: {fileID: 0}
+    - target: {fileID: 7193087806084317191, guid: 07df372674f2f454e9d08a5b84450cb3,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.94613874
+      objectReference: {fileID: 0}
+    - target: {fileID: 7193087806084317191, guid: 07df372674f2f454e9d08a5b84450cb3,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.23986727
+      objectReference: {fileID: 0}
+    - target: {fileID: 7193087806084317191, guid: 07df372674f2f454e9d08a5b84450cb3,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.21078338
+      objectReference: {fileID: 0}
+    - target: {fileID: 7193087806084317191, guid: 07df372674f2f454e9d08a5b84450cb3,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.053438287
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

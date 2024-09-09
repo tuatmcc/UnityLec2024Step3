@@ -21,4 +21,9 @@ public class SkyboxController : MonoBehaviour
             sun.intensity = 1.0f;
         }
     }
+
+    public void AirDebug()
+    {
+        Debug.Log("AirDebug");
+    }
 }

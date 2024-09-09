@@ -256,6 +256,64 @@ public class UnityChanController : MonoBehaviour
 
 ![alt text](./img/2.test3.gif)
 
+# 3. Decal
+
+Decal はプロジェクターで投影するように、任意の画像や動画を投影するものです。ここでは Unity 標準の Decal を使って、 MCC のロゴを投影します。
+
+## 3.1. Decal の追加
+
+/UnityChanAdventure/Prefabs/ の中に `MccLogoProjector` プレハブを作成してください。その後、 `MccLogoProjector` に `URP Decal Projector` コンポーネントを追加してください。
+
+![alt text](./img/3.createdecal.webp)
+
+`URP Decal Projector` コンポーネントに "The current renderer has no Decal Renderer Feature added." という警告が出てきます。その隣の `Open` をクリックし、Universal Render Data を開き、`Add Renderer Feature` をクリックして、 `Decal` を追加してください。
+
+![alt text](./img/3.adddecalfeature.webp)
+
+これで `MccLogoProjector` に警告が出なくなります。
+
+![alt text](./img/3.check.png)
+
+## 3.2. Decal マテリアルの作成
+
+Decal のマテリアルを作るために、 Decal のシェーダーを作ります。
+
+/Assets/UnityChanAdventure で右クリックし、 `Shaders` フォルダーを作り、 `Shaders` フォルダーの中で右クリックし。 Create -> Shader Graph -> URP -> Decal Shader Graph を選択して、 `MccLogo` という名前のシェーダーグラフを作成してください。
+
+![alt text](./img/3.createshader.webp)
+
+作成したら、 `MccLogo` を開いてください。はじめにプロパティを追加します。左上の `+` をクリックして、 `Texture2D` を追加してください。名前は `Main Texture` にしてください。
+
+![alt text](./img/3.properties.webp)
+
+次に、右クリックして `Create Node` から Input -> Texture -> Sample Texture 2D ノードを追加してください。そして、  `Main Texture` プロパティをドラッグアンドドロップして配置し、 `Main Texture` プロパティの右の赤い部分を Sample Texture 2D の Texture(T2) の左の赤い部分にドラッグアンドドロップして接続してください。
+
+![alt text](./img/3.addnode.webp)
+
+次に、 Sample Texture 2D の RGBA(4) の右のピンク色の部分を Fragment の Base Color(3) の左側の黄色の部分にドラッグアンドドロップして接続してください。また、 Sample Texture 2D の Alpha(1) の右の水色の部分を Fragment の Alpha(1) の左側の水色の部分にドラッグアンドドロップして接続してください。
+
+![alt text](./img/3.connect.webp)
+
+これで、 Decal のシェーダーグラフが完成しました。 `MccLogo` プレハブの `URP Decal Projector` の `Material` に `MccLogo` シェーダーの `▶` をクリックして出てくるマテリアルをドラッグアンドドロップしてください。
+
+![alt text](./img/3.shadermaterial.webp)
+
+MccLogoProjector のマテリアルの Inputs にある `Main Texture` に /Assets/UnityChanAdventure/Textures/ の中にある `MCC_logo_1` をドラッグアンドドロップしてください。
+
+![alt text](./img/3.mcclogotexture.webp)
+
+## 3.3. Decal の配置
+
+`Stage` プレハブを開いて `MccLogoProjector` を配置してください。デカールはオブジェクトの Z 軸 (シーンビューで見ると青い矢印) の方向に投影されます。 `MccLogoProjector` の Transform の Rotation の X を 90 度にしてください。デカールは `URP Decal Projector` の `Width` と `Height` でサイズ、 `Projection Depth` で奥行きを調整できます。
+
+![alt text](./img/3.setprefab.webp)
+
+複数置いて様々な多きさ、場所で配置してみてください。建物や岩に投影するといい感じにできます。
+
+![alt text](./img/3.decal.png)
+
+デカールのテクスチャを弾痕にして、動的に生成すれば、銃を撃って弾痕を残すことができます。
+
 # MCC Unity講習会
 
 * [環境構築編](https://tuatmcc.com/blog/UnityLec2024Step0/)

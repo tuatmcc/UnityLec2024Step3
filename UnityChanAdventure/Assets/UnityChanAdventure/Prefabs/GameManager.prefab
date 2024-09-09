@@ -78,3 +78,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   daySkybox: {fileID: 2100000, guid: e1906c4289209bc498c91b068561fb7d, type: 2}
   nightSkybox: {fileID: 2100000, guid: 73bbde1a5408b8f42bdedfb6e92a59da, type: 2}
+  sun: {fileID: 0}
