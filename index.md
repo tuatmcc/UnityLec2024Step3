@@ -298,9 +298,9 @@ Decal のマテリアルを作るために、 Decal のシェーダーを作り�
 
 ![alt text](./img/3.shadermaterial.webp)
 
-MccLogoProjector のマテリアルの Inputs にある `Main Texture` に /Assets/UnityChanAdventure/Textures/ の中にある `MCC_logo_1` をドラッグアンドドロップしてください。
+ShaderGraph で `Main Texture` を選択し、 `Other Inspector` の Defalt に /Assets/UnityChanAdventure/Textures/ の中にある `MCC_logo_1` をドラッグアンドドロップしてください。
 
-![alt text](./img/3.mcclogotexture.webp)
+![alt text](./img/3.settexture.webp)
 
 ## 3.3. Decal の配置
 
@@ -313,6 +313,34 @@ MccLogoProjector のマテリアルの Inputs にある `Main Texture` に /Asse
 ![alt text](./img/3.decal.png)
 
 デカールのテクスチャを弾痕にして、動的に生成すれば、銃を撃って弾痕を残すことができます。
+
+## 3.4. Decal の Rendeing Layer の設定
+
+ここでは unity 2022.3.3f1 での設定方法を説明します。他のバージョンでは異なる場合があります。
+
+このままでは、 Unity ちゃん自体にもデカールが投影されてしまいます。これを防ぐために、デカールのレイヤーを設定します。
+
+![alt text](./img/3.layer.png)
+
+はじめに、 /Settings の中にある `URP-High Fidelity-Renderer (Universal Renderer Data)` を開いて、 `Decal` の中にある `Use Rendering Layers` にチェックを入れてください。
+
+![alt text](./img/3.setting.webp)
+
+次に `Edit` -> `Project Settings` -> `Graphics` -> `URP Global Settings` を開いて、 `Rendering Layers (3D)` の `Leyer1` を `Decal Receivable` に変更してください。
+
+![alt text](./img/3.createlayer.webp)
+
+次に、すべてのオブジェクトにレンダリングレイヤーを設定します。はじめに岩を設定します。 /UnityChanAdventure/Prefabs/ の中にある岩を 4 つ選択して(Control押しながらクリックするとできる)、 Mesh Renderer コンポーネントの Additional Settings の `Rendering Layer Mask` をクリックして `Decal Receivable` をクリックしてチェックを入れてください。
+
+![alt text](./img/3.stonelayer.webp)
+
+続いて家です。/UnityChanAdventure/Prefabs/ の中にある `House` プレハブを開いて、 以下の画像のように照明以外のオブジェクト(Pointがつくオブジェクト以外)を選択し、 Mesh Renderer コンポーネントの Additional Settings の `Rendering Layer Mask` をクリックして `Decal Receivable` をクリックしてチェックを入れてください。
+
+![alt text](./img/3.houselayer.webp)
+
+続いて Terrain です。/UnityChanAdventure/Prefabs/ の中にある `Stage` プレハブを開いて、 Terrain コンポーネントで `Terrain Settings` (5つの中で1番右のやつ) に切り替えて、Lighting の `Render Layer Mask` をクリックして `Decal Receivable` をクリックしてチェックを入れてください。
+
+![alt text](./img/3.terrainlayer.webp)
 
 # MCC Unity講習会
 
