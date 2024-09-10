@@ -677,6 +677,91 @@ public class ResultManager : MonoBehaviour
 
 ![alt text](./img/4.test.gif)
 
+# 5. UniTask を使って非同期処理をする
+
+非同期処理とは、処理に時間がかかる処理を行うときに、その処理が終わるまで待たずに他の処理を行うことです。例えば、ネットワーク通信やファイルの読み込み、データベースの読み書きなどがあります。非同期処理を行うために、今回は `UniTask` という便利なライブラリを使います。
+
+ここでは、非同期処理として、[dog.ceo](https://dog.ceo/) からランダムな犬の画像を取得して、家の中のテレビに画像を表示する処理を行います。画像の取得は時間がかかる処理なので、非同期処理を行います。
+
+## 5.1. UniTask のインストール
+
+Window -> Package Manager で Package Manager を開いて、 `+` を押して `Add package from git URL` を選択してください。そして以下の URL を入力して読み込んでください。
+
+```
+https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask  
+```
+
+![alt text](./img/5.addunitask.webp)
+
+## 5.2. 家のテレビに Sprite Renderer を追加
+
+/UnityChanAdventure/Prefabs/ の中にある `House` プレハブを開いて、 `House` の中にある `TV` オブジェクトを右クリックして `Create Emptu` でからのオブジェクを追加してください。オブジェクト名は `dog` にしました。そして、インスペクターから Add Component で `Sprite Renderer` を追加してください。そして座標とスケールを以下のように設定してください。
+
+![alt text](./img/5.spriterenderer.webp)
+
+## 5.3. 犬の画像を取得する
+
+/UnityChanAdventure/Scripts/ の中に `DogImage.cs` を作成してください。
+
+![alt text](./img/5.dogimage.webp)
+
+`DogImage.cs` の中身は以下の通りです。 `UniTask` を使って非同期処理を行います。`GetDogImage` メソッドで dog.ceo からランダムな犬の画像を取得して、 `SpriteRenderer` に画像を表示します。`https://dog.ceo/api/breeds/image/random` にアクセスすると、 json テキストが帰ってきます。(ブラウザで確認するとわかります)。そして、 Unity で json を使うには `JsonUtility.FromJson` を使って json テキストをオブジェクトに変換します。今回、返ってくる json は、  `message` と `status` の2つのキーがあります。そして、そのキーに該当する `[Serializable]` なクラスを作ると `JsonUtility.FromJson` で json ファイルがそのクラスのインスタンスとして扱えます。 `UnityWebRequestTexture.GetTexture` で画像を取得します。`Sprite.Create` で Texture2D を Sprite に変換します。
+
+`GetDogImage` 関数は、特に戻り値が無い UniTask です。関数名の定義時に `async` キーワードを付けて、関数内で `await` キーワードを使って非同期処理を行います。`await` キーワードは、非同期処理が終わるまで待ちます。`Forget` メソッドは、非同期処理を行う際に、エラーが発生してもエラーを無視して処理を続行します。
+
+```csharp title="DogImage.cs"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.Networking;
+
+public class DogImage : MonoBehaviour, Interactable
+{
+    [Serializable]
+    private class JsonResponse
+    {
+        public string message;
+        public string status;
+    }
+    
+    private SpriteRenderer spriteRenderer;
+    
+    void Start()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+    
+    public void Interact()
+    {
+        GetDogImage().Forget();
+    }
+
+    private async UniTask GetDogImage()
+    {
+        UnityWebRequest jsonrequest = UnityWebRequest.Get("https://dog.ceo/api/breeds/image/random");
+        await jsonrequest.SendWebRequest();
+        string json = jsonrequest.downloadHandler.text;
+        
+        JsonResponse response = JsonUtility.FromJson<JsonResponse>(json);
+        UnityWebRequest imagerequest = UnityWebRequestTexture.GetTexture(response.message);
+        await imagerequest.SendWebRequest();
+        Texture2D texture = DownloadHandlerTexture.GetContent(imagerequest);
+        spriteRenderer.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+    }
+}
+```
+
+`House` プレハブの `TV` オブジェクトに `DogImage` スクリプトをアタッチしてください。そして、 Add Component で `Box Collider` を追加してください。 `Is Trigger` にチェックを入れてください。 Box Collider の サイズを以下のように設定してください。
+
+![alt text](./img/5.setdogimage.webp)
+
+再生して、家の中にあるテレビに近づいて、 `E` キーを押すと、ランダムな犬の画像が表示されることを確認してください。犬の画像はダウンロードするので、 `E` キーを押してから表示までちょっと時間がかかります。しかし、非同期処理を行っているので、ダウンロード中でも、ゲームの他のプログラムは動けるのでフリーズしません。
+
+![alt text](./img/5.check.png)
+
+
 ## 6. R3 で経過時間カウントをする。
 
 R3 は Unity で Rx(Reactive Extensions) を行うためのライブラリです。 Rx はイベント駆動プログラミングを行うためライブラリです。
@@ -696,10 +781,6 @@ https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity
 Nuget -> Manage NuGet Packages で NuGet パッケージを開いて、 `R3` を検索してください。 そして `R3` をインストールしてください。
 
 ![alt text](./img/6.r3.webp)
-
-```
-https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask  
-```
 
 ## 6.2. テキストの作成
 
