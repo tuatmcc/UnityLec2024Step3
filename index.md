@@ -762,7 +762,14 @@ public class DogImage : MonoBehaviour, Interactable
 ![alt text](./img/5.check.png)
 
 
-## 6. R3 で経過時間カウントをする。
+
+
+
+
+
+# 7うまく行かなくて苗
+
+## 7. R3 で経過時間カウントをする。
 
 R3 は Unity で Rx(Reactive Extensions) を行うためのライブラリです。 Rx はイベント駆動プログラミングを行うためライブラリです。
 
@@ -803,6 +810,9 @@ TimeText を Canvas の右上に移動させ、text を `0 秒経過` にして�
 ![alt text](./img/6.TimeManager.webp)
 
 `TimeManager.cs` の中身は以下の通りです。 `UniTask` を使って経過時間をカウントします。
+
+```csharp title="TimeManager.cs"
+
 
 
 # MCC Unity講習会
