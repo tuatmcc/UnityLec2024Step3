@@ -677,6 +677,53 @@ public class ResultManager : MonoBehaviour
 
 ![alt text](./img/4.test.gif)
 
+## 6. R3 で経過時間カウントをする。
+
+R3 は Unity で Rx(Reactive Extensions) を行うためのライブラリです。 Rx はイベント駆動プログラミングを行うためライブラリです。
+
+## 6.1. R3 のインストール
+
+Unity で Rx を使うには、まず、 `NuGetForUnity` をプロジェクトに入れてから、 Nuget(.NETのパッケージマネージャー)経由で R3 のベースを入れて、その後、 `R3.Unity` を入れます。
+
+Window -> Package Manager で Package Manager を開いて、 `+` を押して `Add package from git URL` を選択してください。そして以下の URL を入力して読み込んでください。
+
+```
+https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity
+```
+
+![alt text](./img/6.nugetforunity.webp)
+
+Nuget -> Manage NuGet Packages で NuGet パッケージを開いて、 `R3` を検索してください。 そして `R3` をインストールしてください。
+
+![alt text](./img/6.r3.webp)
+
+```
+https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask  
+```
+
+## 6.2. テキストの作成
+
+`Main` シーンで、 ヒエラルキーで右クリックして UI -> Text - TextMeshPro を選択してください。 名前は `TimeText` にします。これは経過時間を表示するためのテキストです。テキストは Canvas の中に生成されます。
+
+![alt text](./img/6.timetext.webp)
+
+TimeText を Canvas の右上に移動させ、text を `0 秒経過` にしてください。すると、テキストがうまく表示されないのがわかります。
+
+![alt text](./img/6.time.webp)
+
+これは、使ってる Text Mesh Pro のアセットが日本語に対応していないからです。日本語に対応しているアセットは、 /UNityChanAdventure/Font の `NotoSansJP-VariableFont_wght SDF` です。 TimeText の Font Asset に `NotoSansJP-VariableFont_wght SDF` をドラッグアンドドロップしてください。そうすれば、日本語に対応しているので、テキストがうまく表示されます。
+
+![alt text](./img/6.setfontassets.webp)
+
+## 6.3. 経過時間のカウント
+
+/UnityChanAdventure/Scripts/ の中に `TimeManager.cs` を作成してください。
+
+![alt text](./img/6.TimeManager.webp)
+
+`TimeManager.cs` の中身は以下の通りです。 `UniTask` を使って経過時間をカウントします。
+
+
 # MCC Unity講習会
 
 * [環境構築編](https://tuatmcc.com/blog/UnityLec2024Step0/)
