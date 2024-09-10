@@ -1,32 +1,34 @@
+using System;
 using System.Collections;
+using System.Threading;
 using Cysharp.Threading.Tasks;
+using R3;
 using TMPro;
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI timeText;
-    
-    private float time = 0;
-    private bool counting = true;
+    private TextMeshProUGUI timeText;
+    private int time = 0;
+    private CancellationTokenSource cts;
     
     private void Start()
     {
-        TimeCount().Forget();
+        cts = new CancellationTokenSource();
+        timeText = GetComponent<TextMeshProUGUI>();
+        
+        Observable.Interval(TimeSpan.FromSeconds(1.0f), cts.Token)
+            .Subscribe(_ =>
+            {
+                time++;
+                timeText.text = "Time: " + time;
+                Debug.Log("Time: " + time);
+            });
     }
-
-    private void Destroy()
+    
+    private void OnDestroy()
     {
-        counting = false;
-    }
-
-    private async UniTask TimeCount()
-    {
-        while (counting)
-        {
-            await UniTask.Delay(1000);
-            time++;
-            timeText.text = "Time: " + time;
-        }
+        Debug.Log("TimeManager OnDestroy");
+        cts.Cancel();
     }
 }
