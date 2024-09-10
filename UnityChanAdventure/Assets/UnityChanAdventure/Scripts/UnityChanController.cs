@@ -46,6 +46,11 @@ public class UnityChanController : MonoBehaviour
         {
             interactableObj = obj;
         }
+        
+        if (other.TryGetComponent<ICollectable>(out var collectable))
+        {
+            collectable.Collect();
+        }
     }
     
     private void OnTriggerExit(Collider other)

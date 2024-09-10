@@ -342,6 +342,341 @@ ShaderGraph で `Main Texture` を選択し、 `Other Inspector` の Defalt に 
 
 ![alt text](./img/3.terrainlayer.webp)
 
+# 4. 依存性注入(DI) を使って スコア管理をする
+
+ここでは、スコアのためにステージにスコア用のアイテムを置いて、 Unity ちゃんがアイテムに触れるとスコアが加算されるようにします。そしてスコアマネージャーがシーンを遷移しても参照できるように Zenject を使ってスコアマネージャーのインスタンスを管理します。
+
+# 4.1.. 依存性注入(DI) とは
+
+変数の代入は通常プログラムで `-` を使ったりして代入します。しかし、依存性注入(DI) は、変数の代入を自動で行うものです。これにより変数に代入する際、条件分岐して代入するものをその場の環境に合わせて自動で分岐して代入してくれたり、代入するオブジェクトがどこにあるかを気にせずに変数に代入させることができます。
+
+Unity では、シーンを切り替えると、別のシーンにあったゲームオブジェクトを参照できなくなります。そこで、スコアマネージャーをシーン外で管理してもらって、シーン内でスコアマネージャーを参照したいときは、依存性注入(DI) を使ってスコアマネージャーのインスタンスを取得します。これによって、スコアマネージャーがシーン内にいなくても、依存性注入によって代入されるため、スコアマネージャーを参照することができます。
+
+## 4.2. Zenject のインストール
+
+Zenject は Unity Asset Store から Extenject Dependency Injection IOC をインストールすることで使用できます。 [ここ](https://assetstore.unity.com/packages/tools/utilities/extenject-dependency-injection-ioc-157735) からインストールしてください。まずは自身の Unity アカウントでログインし、マイアセットに追加してください。
+
+![alt text](./img/4.addmyassets.webp)
+
+Unity エディタを開き、 Windo -> Package Manager から `Unity Registry` を `My Assets` に変更してください。そして、 `Extenject Dependency Injection IOC` をダウンロードしてください。ダウンロードできたら `Import` を押してインポートしてください。
+
+![alt text](./img/4.import.webp)
+
+## 4.3. スコアマネージャーの作成
+
+/UnityChanAdventure/Scripts/ の中に `IScoreManager.cs` を作成してください。
+
+![alt text](./img/4.IScoreManager.webp)
+
+`IScoreManager.cs` の中身は以下の通りです。 `IScoreManager` インターフェースです。
+
+```csharp title="IScoreManager.cs"
+public interface IScoreManager
+{
+    void AddScore(ScoreItem scoreItem);
+    int GetScore();
+    void RegisterScoreItem(ScoreItem scoreItem);
+}
+```
+
+/UnityChanAdventure/Scripts/ の中に `ScoreManagerImpl.cs` を作成してください。
+
+![alt text](./img/4.scoremanagerimpl.webp)
+
+`ScoreManagerImpl.cs` の中身は以下の通りです。 `IScoreManager` インターフェースを実装したクラスです。
+
+```csharp title="ScoreManagerImpl.cs"
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ScoreManagerImpl : IScoreManager
+{
+    private int score = 0;
+    private List<ScoreItem> scoreItems = new List<ScoreItem>();
+
+    public void AddScore(ScoreItem scoreItem)
+    {
+        score += scoreItem.GetScore();
+        scoreItems.Remove(scoreItem);
+        Debug.Log("Score: " + score);
+    }
+
+    public int GetScore()
+    {
+        return score;
+    }
+
+    public void RegisterScoreItem(ScoreItem scoreItem)
+    {
+        scoreItems.Add(scoreItem);
+    }
+}
+```
+
+## 4.4 スコアのアイテムの作成
+
+/UnityChanAdventure/ModelssMedal の中にスコア用アイテムとして、 `medal` があります。これを右クリックして Create -> PrefabVariant を選択してください。そして、生成された `medal` プレハブを /UnityChanAdventure/Prefabs/ の中に移動してください。
+
+![alt text](./img/4.medalprefab.webp)
+
+/UnityChanAdventure/Scripts/ の中に `ICollectable.cs` を作成してください。
+
+![alt text](./img/4.ICollectable.webp)
+
+`ICollectable.cs` の中身は以下の通りです。 `ICollectable` インターフェースです。
+
+```csharp title="ICollectable.cs"
+public interface ICollectable
+{
+    void Collect();
+}
+```
+
+UnityChanAdventure/Scripts/ の中に `ScoreItem.cs` を作成してください。
+
+![alt text](./img/4.scoreitem.webp)
+
+`ScoreItem.cs` の中身は以下の通りです。 `ICollectable` インターフェースを実装したクラスです。`[Inject]` で `IScoreManager` を注入しています。
+
+```csharp title="ScoreItem.cs"
+using System;
+using UnityEngine;
+using Zenject;
+
+public class ScoreItem : MonoBehaviour, ICollectable
+{
+    [SerializeField] private int score = 10;
+
+    [Inject] private IScoreManager scoreManager;
+
+    private void Start()
+    {
+        scoreManager.RegisterScoreItem(this);
+    }
+
+    public void Collect()
+    {
+        scoreManager.AddScore(this);
+        Destroy(gameObject);
+    }
+    
+    public int GetScore()
+    {
+        return score;
+    }
+}
+```
+
+/UnityChanAdventure/Prefabs/ の中にある `medal` プレハブを開いて、 `ScoreItem` スクリプトドラッグアンドドロップして追加してください。
+
+![alt text](./img/4.attachscore.webp)
+
+そして、 Add Component で `Box Collider` を追加してください。 `Is Trigger` にチェックを入れてください。そして、 `Scale` を小さくしてください。
+
+![alt text](./img/4.addcoloder.webp)
+
+## 4.5. スコアマネージャーの注入の設定
+
+/UnityChanAdventure/Scripts/ の中で右クリックし、 Create -> Zenject -> Installer を選択してください。そして、 `ScoreManagerInstaller.cs` という名前で作成してください。
+
+![alt text](./img/4.monoinstaller.webp)
+
+![alt text](./img/4.name.webp)
+
+すると、インストーラーのスクリプトが生成されます。開いて、以下のように記述してください。
+
+```csharp title="ScoreManagerInstaller.cs"
+using UnityEngine;
+using Zenject;
+
+public class ScoreManagerInstaller : MonoInstaller
+{
+    public override void InstallBindings()
+    {
+        Container.Bind<IScoreManager>().To<ScoreManagerImpl>().AsSingle();
+    }
+}
+```
+
+`Main` シーンを開いて、 ヒエラルキー上で右クリックし、 Zenject -> Scene Context を選択してください。すると、シーン上に `SceneContext` が生成されます。
+
+![alt text](./img/4.context.webp)
+
+/UnityAdventure の Resources フォルダを作り、その中で右クリックして Create -> Zenject -> Project Context を選択してください。 `ProjectContext` が生成されます。
+
+![alt text](./img/4.projectcontext.webp)
+
+`ProjectContext` を選択して、 `ScoreManagerInstaller` をドラッグアンドドロップしてください。そして、 `ProjectContext` コンポーネントの `Mono Installers` の `+` を押して、`ScoreManagerInstaller` をドラッグアンドドロップして追加してください。
+
+![alt text](./img/4.installer.webp)
+
+## 4.6. UNity ちゃんがアイテムに触れたらスコアが加算されるようにする
+
+/UnityChanADventure/Scripts の中の `UnityChanController.cs` の OnTriggerEnter でアイテムに触れたら、 `ICollectable` インターフェースの `Collect` メソッドを呼び出します。これで、Unity ちゃんがアイテムに触れたら、スコアが加算されるようになります。
+
+```diff title="UnityChanController.cs"
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class UnityChanController : MonoBehaviour
+{
+    private Rigidbody rb;
+    private float speed;
+    private float rotationSpeed;
+    private Vector2 moveInput;
+    private Animator animator;
+    private Interactable interactableObj;
+
+    [SerializeField] private float moveSpeedConst = 5.0f;
+    [SerializeField] private float rotationSpeedConst = 5.0f;
+    [SerializeField] private float jumpForce = 200.0f;
+    [SerializeField] private float raydistance = 1.1f;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
+    }
+
+    void FixedUpdate()
+    {
+        speed = moveInput.y * moveSpeedConst;
+        rotationSpeed = moveInput.x * rotationSpeedConst;
+
+        rb.velocity = transform.forward * speed + new Vector3(0f, rb.velocity.y, 0f);
+        rb.angularVelocity = new Vector3(0, rotationSpeed, 0);
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+        animator.SetFloat("speed", moveInput.y);
+        animator.SetFloat("rotate", moveInput.x);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent<Interactable>(out var obj))
+        {
+            interactableObj = obj;
+        }
+        
++       if (other.TryGetComponent<ICollectable>(out var collectable))
++       {
++           collectable.Collect();
++       }
+    }
+    
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.TryGetComponent<Interactable>(out var obj) && obj == interactableObj)
+        {
+            interactableObj = null;
+        }
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            interactableObj?.Interact();
+        }
+    }
+    
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            bool isGrounded = Physics.Raycast(transform.position + new Vector3(0.0f, 1.0f, 0.0f), Vector3.down, raydistance);
+            if (isGrounded)
+            {
+                animator.SetTrigger("jump");
+                rb.AddForce(Vector3.up * jumpForce);
+            }
+        }
+    }
+}
+```
+
+`Stage` プレハブに `Medal` を適当に配置してください。
+
+![alt text](./img/4.porpmedal.webp)
+
+再生して、 Unity ちゃんがアイテムに触れると、スコアが加算されることを確認してください。デバッグでコンソールにスコアが表示されます。
+
+![alt text](./img/4.check.png)
+
+## 4.7. リザルトシーン
+
+/UnityChanAdventure/Scenes/ の中に `Result` シーンを作成してください。そして、 `Result` シーンを開いてください。
+
+![alt text](./img/4.createscene.webp)
+
+`Result` シーンに `Stage` プレハブを置いてください。これは背景として使います。カメラの位置と角度も適当な角度にしてください。
+
+![alt text](./img/4.setstageresult.webp)
+
+`Result` シーンで `Stage` のメダルは消してください。プレハブからは消さないでください。
+
+![alt text](./img/4.deletemedal.webp)
+
+`Result` シーンのヒエラルキーで右クリックし、 UI -> Text - TextMeshPro を選択してください。これはスコアを表示するためのテキストです。テキストはCanvasの中に生成されます。TMP Importer が出てきたら Import してください。
+
+![alt text](./img/4.text.webp)
+
+`Result` シーンのヒエラルキーで右クリックし、 UI -> Image を選択してください。これは Canvas の背景です。
+
+![alt text](./img/4.image.webp)
+
+Image の色を暗い色にして、アルファ値(透明度)を下げるといい感じになります。
+
+![alt text](./img/4.setcolor.webp)
+
+/UnityChanAdventure/Scripts/ の中に `ResultManager.cs` を作成してください。
+
+![alt text](./img/4.resulttext.webp)
+
+`Result` シーンのヒエラルキーで右クリックし、 Create Empty を選択して `ResultManager` オブジェクトを作ってください。そして、 `ResultManager` オブジェクトに `ResultManager` スクリプトをアタッチしてください。
+
+![alt text](./img/4.resultmanager.webp)
+
+`ResultManager.cs` の中身は以下の通りです。 `IScoreManager` を注入して、スコアを取得してテキストに表示します。
+
+```csharp title="ResultManager.cs"
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using Zenject;
+
+public class ResultManager : MonoBehaviour
+{
+    [SerializeField] private TextMeshProUGUI scoreText;
+    
+    [Inject] private IScoreManager scoreManager;
+    
+    private void Start()
+    {
+        scoreText.text = "Score: " + scoreManager.GetScore();
+    }
+}
+```
+
+`ResultManager` オブジェクトの `Resulr Manager` コンポーネントの `Score Text` に `Text (TMP)` をドラッグアンドドロップしてください。
+
+![alt text](./img/4.attachtext.webp)
+
+`Result` シーンを Build Setting に登録します。 File -> Build Settings を開いて、 `Add Open Scenes` を押してください。そうすれば、 `Result` シーンが登録されます。
+
+![alt text](./img/4.addscene.webp)
+
+`Main` シーンを開いて、再生して確認してみましょう。
+
+![alt text](./img/4.test.gif)
+
 # MCC Unity講習会
 
 * [環境構築編](https://tuatmcc.com/blog/UnityLec2024Step0/)
