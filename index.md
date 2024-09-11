@@ -314,6 +314,7 @@ ShaderGraph で `Main Texture` を選択し、 `Other Inspector` の Defalt に 
 
 デカールのテクスチャを弾痕にして、動的に生成すれば、銃を撃って弾痕を残すことができます。
 
+<!--
 ## 3.4. Decal の Rendeing Layer の設定
 
 ここでは unity 2022.3.3f1 での設定方法を説明します。他のバージョンでは異なる場合があります。
@@ -341,6 +342,7 @@ ShaderGraph で `Main Texture` を選択し、 `Other Inspector` の Defalt に 
 続いて Terrain です。/UnityChanAdventure/Prefabs/ の中にある `Stage` プレハブを開いて、 Terrain コンポーネントで `Terrain Settings` (5つの中で1番右のやつ) に切り替えて、Lighting の `Render Layer Mask` をクリックして `Decal Receivable` をクリックしてチェックを入れてください。
 
 ![alt text](./img/3.terrainlayer.webp)
+-->
 
 # 4. 依存性注入(DI) を使って スコア管理をする
 
@@ -627,7 +629,7 @@ public class UnityChanController : MonoBehaviour
 
 ![alt text](./img/4.text.webp)
 
-`Result` シーンのヒエラルキーで右クリックし、 UI -> Image を選択してください。これは Canvas の背景です。
+`Result` シーンのヒエラルキーで右クリックし、 UI -> Image を選択してください。これは Canvas の背景です。Canvas内での、オブジェクトの順番が、描画される順番(レイヤー)になります。
 
 ![alt text](./img/4.image.webp)
 
@@ -995,6 +997,87 @@ TimeText に `TimeManager` スクリプトをアタッチしてください。
 ![alt text](./img/7.timerset.gif)
 
 `Observable.Interval` では、指定した時間間隔でイベントを発行します。`TimeSpan.FromSeconds(1.0f)` で、1秒ごとにイベントを発行するように指定してします。`Subscribe` で、イベントを購読します。`_` は、イベントの引数です。特に使わないので、 `_` にしています。 `time++` で、時間をカウントします。`timeText.text = time + " 秒経過";` で、テキストに時間を表示します。最後の `AddTo(this)` は、このスクリプトが破棄されたとき(Unity の再生が止まったとき)に、購読を解除するためのものです(終了判定みたいなもの)。そうしないと、Unityの再生が止まっても、プログラムが動き続けます。
+
+# 8. タイトルを追加してビルドする
+
+ここでは、タイトルを追加して、ビルドします。
+
+## 8.1. タイトルの作成
+
+/UnityChanAdventure/Scenes/ の中に `Title` シーンを作成してください。そして、 `Title` シーンを開いてください。
+
+![alt text](./img/8.createtitle.webp)
+
+`Title` シーンに `Stage` プレハブを置いてください。メダルは無効化しといてください。これは背景として使います。カメラの位置と角度も適当な角度にしてください。ヒエラルキーで右クリックして、 UI -> Text - TextMeshPro を選択してください。これはタイトルを表示するためのテキストです。テキストは Canvas の中に生成されます。また、 UI -> Image を選択してください。これは Canvas の背景です。色を暗い色にして、アルファ値(透明度)を下げるといい感じになります。テキストの丼とは /UnityChanAdventure/Font の `NotoSansJP-VariableFont_wght SDF` をドラッグアンドドロップしてください。そして、インスペクターからテキストの width と height を変更してください。テキストもお好みのタイトルをつけてください(以下の画像では `Unityちゃんアドベンチャー`)。フォントの設定の `Font Style` で `B` は太字、 `I` はイタリック(斜体)、 `U` は下線、 `S` は打ち消し線です。インスペクターの下の方の Color でテキストの色を変更できます。
+
+![alt text](./img/8.settext.webp)
+
+## 8.2. タイトルからメインへの遷移
+
+`Title` シーンのヒエラルキーで右クリックして、  UI -> Button - TextMeshPro を選択してください。これは、メインシーンに遷移するためのボタンです。ボタンは Canvas の中に生成されます。ボタンの配置とサイズをいい感じに位置に調整して、テキストを `Push Start` にしましょう。ボタンのテキストは `▶` を押して出てくるテキストで編集できます。
+
+![alt text](./img/8.button.webp)
+
+/UnityChanAdventure/Scripts/ の中に `Title2Main.cs` を作成してください。
+
+```csharp title="Title2Main.cs"
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class TItle2Main : MonoBehaviour
+{
+    public void OnClick()
+    {
+        SceneManager.LoadScene("Main");
+    }
+}
+```
+
+`Title2Main` スクリプトを `Button` にアタッチしてください。そしてボタン の On Click() の `+` を押して、 `Title2Main` コンポーネントをドラッグアンドドロップしてください。そして No Function から `Title2Main` の `OnClick()`を選択してください。
+
+![alt text](./img/8.onbutton.webp)
+
+File -> Build Settings を開いて、 `Add Open Scenes` を押してください。そうすれば、 `Title` シーンが登録されます。 `Title` シーンが一番上に来るようにしてください。
+
+![alt text](./img/8.setting.webp)
+
+## 8.3. Result シーンから Title シーンへの遷移
+
+リザルトにも、同じようにボタンを追加してください。
+
+![alt text](./img/8.resultbutton.webp)
+
+/UnityChanAdventure/Scripts/ の中に `Result2Title.cs` を作成してください。
+
+```csharp title="Result2Title.cs"
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Result2Title : MonoBehaviour
+{
+    public void OnClick()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
+    }
+}
+```
+
+`Result2Title` スクリプトを `Button` にアタッチしてください。そしてボタン の On Click() の `+` を押して、 `Result2Title` コンポーネントをドラッグアンドドロップしてください。そして No Function から `Result2Title` の `OnClick()`を選択してください。
+
+![alt text](./img/8.result2titlebutton.webp)
+
+File -> Build Settings を開いて、 `Add Open Scenes` を押してください。/UnityChanAdventure/Scenes/ の中にある `Main` シーンをドラッグアンドドロップして、登録してください。 `Title` と `Main` と `Result` のシーンが登録されていることを確認してください。そして、 `Title` シーンが一番上にあることを確認してください。
+
+![alt text](./img/8.mainsetting.webp)
+
+File -> build setting を開いて、 `Build` を押してください。プロジェクトフォルダ内に `build` ディレクトリを作り、 `build` ディレクトリを選択して、ビルドしてください。
+
+![alt text](./img/8.build.webp)
+
+ビルドが終わったら、 `build` ディレクトリの中にある `UnityChanAdventure.exe` を実行してください。これでゲームが完成しました！
 
 # MCC Unity講習会
 
