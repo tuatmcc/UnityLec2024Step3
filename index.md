@@ -346,7 +346,7 @@ ShaderGraph で `Main Texture` を選択し、 `Other Inspector` の Defalt に 
 
 ここでは、スコアのためにステージにスコア用のアイテムを置いて、 Unity ちゃんがアイテムに触れるとスコアが加算されるようにします。そしてスコアマネージャーがシーンを遷移しても参照できるように Zenject を使ってスコアマネージャーのインスタンスを管理します。
 
-# 4.1.. 依存性注入(DI) とは
+## 4.1. 依存性注入(DI) とは
 
 変数の代入は通常プログラムで `-` を使ったりして代入します。しかし、依存性注入(DI) は、変数の代入を自動で行うものです。これにより変数に代入する際、条件分岐して代入するものをその場の環境に合わせて自動で分岐して代入してくれたり、代入するオブジェクトがどこにあるかを気にせずに変数に代入させることができます。
 
@@ -506,7 +506,7 @@ public class ScoreManagerInstaller : MonoInstaller
 
 ![alt text](./img/4.projectcontext.webp)
 
-`ProjectContext` を選択して、 `ScoreManagerInstaller` をドラッグアンドドロップしてください。そして、 `ProjectContext` コンポーネントの `Mono Installers` の `+` を押して、`ScoreManagerInstaller` をドラッグアンドドロップして追加してください。
+`ProjectContext` を選択して、 `ScoreManagerInstaller` をドラッグアンドドロップしてください。そして、 `ProjectContext` コンポーネントの `Mono Installers` の `+` を押して、インスペクターにある `ScoreManagerInstaller` コンポーネント(スクリプトではない)をドラッグアンドドロップして追加してください。
 
 ![alt text](./img/4.installer.webp)
 
