@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using Zenject;
 
@@ -11,6 +12,7 @@ public class ScoreItem : MonoBehaviour, ICollectable
     private void Start()
     {
         scoreManager.RegisterScoreItem(this);
+        transform.DORotate(new Vector3(0, 360, 0), 1, RotateMode.WorldAxisAdd).SetEase(Ease.InOutCubic).SetLoops(-1);
     }
 
     public void Collect()

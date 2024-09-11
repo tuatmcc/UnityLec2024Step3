@@ -761,6 +761,119 @@ public class DogImage : MonoBehaviour, Interactable
 
 ![alt text](./img/5.check.png)
 
+# 6. DOTween を使ってアニメーションをする
+
+ここでは、DOTween を使って、コインを回転させたりする簡単なアニメーションを行います。
+
+DOTween とは、Unity でアニメーションを簡単に行うためのライブラリです。Unity のアニメーションは、アニメーションを作るのに時間がかかりますが、DOTween は、コードでアニメーションを行うことができます。また、Unity のアニメーションは、アニメーションを作るためのアニメーションコントローラーを作る必要がありますが、DOTween は、アニメーションコントローラーを作る必要がありません。
+
+## 6.1. DOTween のインストール
+
+[ここ](https://assetstore.unity.com/packages/tools/animation/dotween-hotween-v2-27676?locale=ja-JP) からアセットストアを開いて、マイアセットに追加してください。
+
+![alt text](./img/6.installdotween.webp)
+
+Unity エディタを開いて、 Windo -> Package Manager から `Unity Registry` を `My Assets` に変更してください。そして、 `DOTween` をダウンロードしてください。ダウンロードできたら `Import` を押してインポートしてください。
+
+![alt text](./img/6.downroaldotween.webp)
+
+インポートできたら、 DOTween Utility Panel を開いて、 `Setup DOTween` を押してください。そして、 Setup DOTween を押してください。
+
+![alt text](./img/6.setupdotween.webp)
+
+すると、コンパイルが始まります。コンパイルが終わったら、 Apply を押してください。
+
+![alt text](./img/6.apply.webp)
+
+## 6.2. メダルのアニメーション
+
+ScoreItem.cs にメダルを回転させるアニメーションを追加します。以下のコードを追加してください。
+
+```diff title="ScoreItem.cs"
+using System;
++using DG.Tweening;
+using UnityEngine;
+using Zenject;
+
+public class ScoreItem : MonoBehaviour, ICollectable
+{
+    [SerializeField] private int score = 10;
+
+    [Inject] private IScoreManager scoreManager;
+
+    private void Start()
+    {
+        scoreManager.RegisterScoreItem(this);
++       transform.DORotate(new Vector3(0, 360, 0), 1, RotateMode.WorldAxisAdd).SetEase(Ease.Linear).SetLoops(-1);
+    }
+
+    public void Collect()
+    {
+        scoreManager.AddScore(this);
+        Destroy(gameObject);
+    }
+    
+    public int GetScore()
+    {
+        return score;
+    }
+}
+```
+
+再生して、メダルが回転することを確認してください。
+
+![alt text](./img/6.liner.gif)
+
+メダルの `transform` で `DORatate` 関数を使って、回転させています。`DORotate` 関数は、回転させる角度、回転させる時間、回転させる軸を指定します。今回は、360度、1秒かけて、ワールド座標のY軸に回転させています。`SetEase` 関数で、回転の動きを指定します。 `Linear` なので、直線に変化します。 `SetLoops` 関数で、回転のループ回数を指定します。`-1` にすると、無限にループします。
+
+他の回転の動きも試してみましょう。`SetEase(Ease.Linear)` の部分を `SetEase(Ease.InOutCubic)` に書き換えます。
+
+```diff title="ScoreItem.cs"
+using System;
++using DG.Tweening;
+using UnityEngine;
+using Zenject;
+
+public class ScoreItem : MonoBehaviour, ICollectable
+{
+    [SerializeField] private int score = 10;
+
+    [Inject] private IScoreManager scoreManager;
+
+    private void Start()
+    {
+        scoreManager.RegisterScoreItem(this);
+-       transform.DORotate(new Vector3(0, 360, 0), 1, RotateMode.WorldAxisAdd).SetEase(Ease.Linear).SetLoops(-1);
++       transform.DORotate(new Vector3(0, 360, 0), 1, RotateMode.WorldAxisAdd).SetEase(Ease.InOutCubic).SetLoops(-1);
+    }
+
+    public void Collect()
+    {
+        scoreManager.AddScore(this);
+        Destroy(gameObject);
+    }
+    
+    public int GetScore()
+    {
+        return score;
+    }
+}
+```
+
+![alt text](./img/6.InOutCubic.gif)
+
+動きが変わりました。
+
+アニメーションの動きはたくさんあります。今回使ったもの以外にもたくさんあります。以下参照([https://github.com/Nightonke/WoWoViewPager/blob/master/Pictures/ease.png](https://github.com/Nightonke/WoWoViewPager/blob/master/Pictures/ease.png))
+
+![alt text](https://github.com/Nightonke/WoWoViewPager/blob/master/Pictures/ease.png?raw=true)
+
+
+
+
+
+
+
 
 
 
