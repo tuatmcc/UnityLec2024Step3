@@ -506,7 +506,7 @@ public class ScoreManagerInstaller : MonoInstaller
 
 ![alt text](./img/4.projectcontext.webp)
 
-`ProjectContext` を選択して、 `ScoreManagerInstaller` をドラッグアンドドロップしてください。そして、 `ProjectContext` コンポーネントの `Mono Installers` の `+` を押して、`ScoreManagerInstaller` をドラッグアンドドロップして追加してください。
+`ProjectContext` を選択して、 `ScoreManagerInstaller` をドラッグアンドドロップしてください。そして、 `ProjectContext` コンポーネントの `Mono Installers` の `+` を押して、インスペクターにある `ScoreManagerInstaller` コンポーネント(スクリプトではない)をドラッグアンドドロップして追加してください。
 
 ![alt text](./img/4.installer.webp)
 
