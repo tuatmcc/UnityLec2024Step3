@@ -908,11 +908,6 @@ Main シーンで右クリックし、 3D Object -> Cube を選択してくだ�
 
 ![alt text](./img/6.check.gif)
 
-
-
-
-
-
 # 7. R3 で経過時間カウントをする。
 
 R3 は Unity で Rx(Reactive Extensions) を行うためのライブラリです。 Rx はイベント駆動プログラミングを行うためライブラリです。
@@ -932,6 +927,14 @@ https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity
 Nuget -> Manage NuGet Packages で NuGet パッケージを開いて、 `R3` を検索してください。 そして `R3` をインストールしてください。
 
 ![alt text](./img/7.r3.webp)
+
+続いて `R3.Unity` をインストールします。 Window -> Package Manager で Package Manager を開いて、 `+` を押して `Add package from git URL` を選択してください。そして以下の URL を入力して読み込んでください。
+
+```
+https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity
+```
+
+![alt text](./img/7.installunityr3.webp)
 
 ## 7.2. テキストの作成
 
@@ -956,8 +959,42 @@ TimeText を Canvas の右上に移動させ、text を `0 秒経過` にして�
 `TimeManager.cs` の中身は以下の通りです。 `UniTask` を使って経過時間をカウントします。
 
 ```csharp title="TimeManager.cs"
+using System;
+using System.Collections;
+using System.Threading;
+using R3;
+using TMPro;
+using UnityEngine;
 
+public class TimeManager : MonoBehaviour
+{
+    private TextMeshProUGUI timeText;
+    private int time = 0;
+    
+    private void Start()
+    {
+        timeText = GetComponent<TextMeshProUGUI>();
 
+        Observable.Interval(TimeSpan.FromSeconds(1.0f))
+            .Subscribe(_ =>
+            {
+                time++;
+                timeText.text = time + " 秒経過";
+            })
+            .AddTo(this);
+    }
+}
+```
+
+TimeText に `TimeManager` スクリプトをアタッチしてください。
+
+![alt text](./img/7.attach.webp)
+
+再生して、経過時間が表示されることを確認してください。
+
+![alt text](./img/7.timerset.gif)
+
+`Observable.Interval` では、指定した時間間隔でイベントを発行します。`TimeSpan.FromSeconds(1.0f)` で、1秒ごとにイベントを発行するように指定してします。`Subscribe` で、イベントを購読します。`_` は、イベントの引数です。特に使わないので、 `_` にしています。 `time++` で、時間をカウントします。`timeText.text = time + " 秒経過";` で、テキストに時間を表示します。最後の `AddTo(this)` は、このスクリプトが破棄されたとき(Unity の再生が止まったとき)に、購読を解除するためのものです(終了判定みたいなもの)。そうしないと、Unityの再生が止まっても、プログラムが動き続けます。
 
 # MCC Unity講習会
 
