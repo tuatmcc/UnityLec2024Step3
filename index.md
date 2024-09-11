@@ -868,14 +868,45 @@ public class ScoreItem : MonoBehaviour, ICollectable
 
 ![alt text](https://github.com/Nightonke/WoWoViewPager/blob/master/Pictures/ease.png?raw=true)
 
+## 6.3. 動く足場
 
+ここでは、 DOTween の Path を使って、足場を動かすアニメーションを行います。足場を動かすために、足場を動かすための足場のスクリプトを作成します。
 
+/UnityChanAdventure/Scripts/ の中に `MovingPlatform.cs` を作成してください。コードは以下の通りです。
 
+```csharp title="MovingPlatform.cs"
+using System.Collections;
+using System.Collections.Generic;
+using DG.Tweening;
+using UnityEngine;
 
+public class MovingPlatform : MonoBehaviour
+{
+    Rigidbody rb;
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        Vector3 startPos = transform.position;
+        Vector3[] path =
+        {
+            new Vector3(0.0f, 0.0f, 0.0f) + startPos,
+            new Vector3(0.0f, 3.0f, 0.0f) + startPos,
+            new Vector3(3.0f, 3.0f, 0.0f) + startPos,
+            new Vector3(3.0f, 0.0f, 0.0f) + startPos,
+            new Vector3(0.0f, 0.0f, 0.0f) + startPos
+        };
+        rb.DOPath(path, 5.0f).SetEase(Ease.Linear).SetLoops(-1);
+    }   
+}
+```
 
+Main シーンで右クリックし、 3D Object -> Cube を選択してください。名前は `MovingPlatform` にしてください。そして、 `MovingPlatform` に `MovingPlatform` スクリプトをアタッチしてください。そして、 Add Component で `Rigidbody` を追加してください。 Rigidbody の `Use Gravity` のチェックを外し、 `Is Kinematic` にチェックを入れてください。これは、物理演算を無効にするためです。そして、 Constraint の `Freeze Position` の `XYZ` 全てにチェックを入れてください。
 
+![alt text](./img/6.moveashiba.webp)
 
+再生して、足場が動くことを確認してください。
 
+![alt text](./img/6.check.gif)
 
 
 
