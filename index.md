@@ -613,6 +613,8 @@ public class UnityChanController : MonoBehaviour
 
 ## 4.7. リザルトシーン
 
+メダルをすべて回収したら、リザルトシーンに遷移するようにします。
+
 /UnityChanAdventure/Scenes/ の中に `Result` シーンを作成してください。そして、 `Result` シーンを開いてください。
 
 ![alt text](./img/4.createscene.webp)
@@ -674,6 +676,42 @@ public class ResultManager : MonoBehaviour
 `Result` シーンを Build Setting に登録します。 File -> Build Settings を開いて、 `Add Open Scenes` を押してください。そうすれば、 `Result` シーンが登録されます。
 
 ![alt text](./img/4.addscene.webp)
+
+`ScoreManagerImpl` にシーンを遷移する処理を付け足します。`AddScore` 関数内で、 `scoreItems.Count == 0` になったら、 `SceneManager.LoadScene("Result");` でリザルトシーンに遷移します。
+    
+```diff title="ScoreManagerImpl.cs"
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class ScoreManagerImpl : IScoreManager
+{
+    private int score = 0;
+    private List<ScoreItem> scoreItems = new List<ScoreItem>();
+
+    public void AddScore(ScoreItem scoreItem)
+    {
+        score += scoreItem.GetScore();
+        scoreItems.Remove(scoreItem);
+        Debug.Log("Score: " + score);
+        
++       if (scoreItems.Count == 0)
++       {
++           SceneManager.LoadScene("Result");
++       }
+    }
+
+    public int GetScore()
+    {
+        return score;
+    }
+
+    public void RegisterScoreItem(ScoreItem scoreItem)
+    {
+        scoreItems.Add(scoreItem);
+    }
+}
+```
 
 `Main` シーンを開いて、再生して確認してみましょう。
 
