@@ -500,7 +500,7 @@ public class ScoreManagerInstaller : MonoInstaller
 }
 ```
 
-`Main` シーンを開いて、 ヒエラルキー上で右クリックし、 Zenject -> Scene Context を選択してください。すると、シーン上に `SceneContext` が生成されます。
+`Main` シーンを開いて、 ヒエラルキー上で右クリックし、 Zenject -> Scene Context を選択してください。すると、シーン上に `SceneContext` が生成されます。 Resultシーンにも同じよにして `SceneContext` を生成してください。
 
 ![alt text](./img/4.context.webp)
 
