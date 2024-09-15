@@ -512,7 +512,7 @@ public class ScoreManagerInstaller : MonoInstaller
 
 ![alt text](./img/4.installer.webp)
 
-## 4.6. UNity ちゃんがアイテムに触れたらスコアが加算されるようにする
+## 4.6. Unity ちゃんがアイテムに触れたらスコアが加算されるようにする
 
 /UnityChanADventure/Scripts の中の `UnityChanController.cs` の OnTriggerEnter でアイテムに触れたら、 `ICollectable` インターフェースの `Collect` メソッドを呼び出します。これで、Unity ちゃんがアイテムに触れたら、スコアが加算されるようになります。
 
