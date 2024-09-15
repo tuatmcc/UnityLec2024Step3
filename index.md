@@ -49,13 +49,11 @@ Unityちゃんアドベンチャーゲーム
 
 ![alt text](./img/2.transconfig.webp)
 
-`Jump00B -> Move` への `Conditions` には `speed` で `0.1` 以上を設定してください。
+`Jump00B -> Move` への `Conditions` には `speed` で `0.1` **以上**を設定してください。
 
 ![alt text](./img/2.jump2move.webp)
 
-`Jump00B -> Idle` への `Conditions` には `speed` で `0.1` 未満を設定してください。
-
-![alt text](./img/2.jump2idle.webp)
+同じようにして、 `Jump00B -> Idle` への `Conditions` には `speed` で `0.1` **未満**を設定してください。
 
 ## 2.2. ジャンプをスペースキーで発動させる
 
