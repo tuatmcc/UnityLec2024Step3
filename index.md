@@ -725,7 +725,7 @@ public class ScoreManagerImpl : IScoreManager
 
 Window -> Package Manager で Package Manager を開いて、 `+` を押して `Add package from git URL` を選択してください。そして以下の URL を入力して読み込んでください。
 
-```
+```text
 https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask  
 ```
 
@@ -956,7 +956,7 @@ Unity で Rx を使うには、まず、 `NuGetForUnity` をプロジェクト�
 
 Window -> Package Manager で Package Manager を開いて、 `+` を押して `Add package from git URL` を選択してください。そして以下の URL を入力して読み込んでください。
 
-```
+```text
 https://github.com/GlitchEnzo/NuGetForUnity.git?path=/src/NuGetForUnity
 ```
 
@@ -968,7 +968,7 @@ Nuget -> Manage NuGet Packages で NuGet パッケージを開いて、 `R3` を
 
 続いて `R3.Unity` をインストールします。 Window -> Package Manager で Package Manager を開いて、 `+` を押して `Add package from git URL` を選択してください。そして以下の URL を入力して読み込んでください。
 
-```
+```text
 https://github.com/Cysharp/R3.git?path=src/R3.Unity/Assets/R3.Unity
 ```
 
