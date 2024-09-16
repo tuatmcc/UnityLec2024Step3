@@ -726,7 +726,7 @@ public class ScoreManagerImpl : IScoreManager
 Window -> Package Manager で Package Manager を開いて、 `+` を押して `Add package from git URL` を選択してください。そして以下の URL を入力して読み込んでください。
 
 ```text
-https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask  
+https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask
 ```
 
 ![alt text](./img/5.addunitask.webp)
