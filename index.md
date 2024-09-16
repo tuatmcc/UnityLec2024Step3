@@ -1,6 +1,6 @@
 ---
 title: "Unity 講習会 2024 発展編"
-date: "2024-08-28"
+date: "2024-09-11"
 author: "sugawa197203"
 ---
 
